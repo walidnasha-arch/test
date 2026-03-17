@@ -31,7 +31,7 @@ p { color:white; font-family:sans-serif; font-size:14px; }
 </style>
 </head>
 <body>
-  <p>Test bordure — coins et hauteur :</p>
+  <p>Test ratio proportionnel :</p>
   <div class="act-wrap">
     <div class="act-btn" id="btn">Attaque Simple</div>
     <div class="act-border-sprite" id="border"></div>
@@ -39,21 +39,23 @@ p { color:white; font-family:sans-serif; font-size:14px; }
   <div id="debug" style="color:#888;font-size:11px;line-height:1.8;margin-top:10px;"></div>
 
 <script>
-const FRAMES = 75, FPS = 10, MARGIN = 6;
+const FRAMES = 75, FPS = 10;
+const AE_W = 233, AE_H = 122; // taille compo AE
 let frame = 0, direction = 1, fw = 0;
 
 const btn = document.getElementById('btn');
 const div = document.getElementById('border');
 
-// On fixe DIV_H à 122px (taille compo AE) peu importe la hauteur du btn
-const DIV_W = btn.offsetWidth + MARGIN * 2;
-const DIV_H = 122; // hauteur fixe = compo AE
+// Ratio depuis la vraie largeur du bouton
+const ratio = btn.offsetWidth / 221; // 221 = largeur carte desktop
+const DIV_W = Math.round(AE_W * ratio);
+const DIV_H = Math.round(AE_H * ratio);
 
 div.style.width  = DIV_W + 'px';
 div.style.height = DIV_H + 'px';
 
 document.getElementById('debug').innerHTML =
-  'btnW:' + btn.offsetWidth + ' btnH:' + btn.offsetHeight +
+  'btnW:' + btn.offsetWidth + ' ratio:' + ratio.toFixed(3) +
   '<br>DIV_W:' + DIV_W + ' DIV_H:' + DIV_H;
 
 const img = document.createElement('img');
