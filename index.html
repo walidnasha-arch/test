@@ -9236,7 +9236,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         img.style.width  = Math.round(img.naturalWidth  * scale) + 'px';
         img.style.height = Math.round(img.naturalHeight * scale) + 'px';
         img.style.marginLeft = '0px';
-        item.fw = Math.round(nativeFW * scale); // largeur réelle d'une frame rendue
+        item.fw = Math.round(img.offsetWidth / FRAMES); // largeur réelle d'une frame rendue
       };
 
       div.appendChild(img);
