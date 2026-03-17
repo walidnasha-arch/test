@@ -9227,9 +9227,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
       img.style.transition = 'none';
       img.style.animation  = 'none';
       img.style.marginTop  = '0px';
-      img.style.display = 'block';
-      img.style.marginLeft = 'auto';
-      img.style.marginRight = 'auto';
+      img.style.position = 'relative';
+      img.style.left = '50%';
+      img.style.transform = 'translateX(-50%)';
 
       const item = {img, fh:0};
 
@@ -9249,7 +9249,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const renderedH = fh * FRAMES; // multiple exact de fh
         img.style.width  = renderedW + 'px';
         img.style.height = renderedH + 'px';
-        img.style.marginTop = '0px';
+        // Centre horizontalement si sprite plus étroit que div
+        const hOffset = Math.round((DIV_W - renderedW) / 2);
+        img.style.marginLeft = hOffset + 'px';
+        img.style.marginTop  = '0px';
         item.fh = fh;
       };
 
