@@ -530,7 +530,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Crimson Pro',Georgia,ser
 
 .act-border-sprite{
   position:absolute;
-  inset:0;
+  inset:-6px;
   border-radius:12px;
   overflow:hidden;
   z-index:2;
@@ -9187,8 +9187,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 (function(){
   const FRAMES = 75;
   const FPS    = 10;
-  const AE_W   = 233;
-  const AE_H   = 200;
+  const AE_W   = 237;
+  const AE_H   = 126;
   const CARD_W = 221;
   let frame = 0, direction = 1;
   let items = [];
@@ -9236,7 +9236,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         img.style.width  = Math.round(img.naturalWidth  * scale) + 'px';
         img.style.height = Math.round(img.naturalHeight * scale) + 'px';
         img.style.marginLeft = '0px';
-        item.fw = DIV_W;
+        item.fw = Math.round(nativeFW * scale); // largeur réelle d'une frame rendue
       };
 
       div.appendChild(img);
