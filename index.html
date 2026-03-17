@@ -9232,11 +9232,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const nativeFH = img.naturalHeight;
         const scaleW = DIV_W / nativeFW;
         const scaleH = DIV_H / nativeFH;
-        const scale  = Math.min(scaleW, scaleH); // contain : tout rentre
-        img.style.width  = Math.round(img.naturalWidth  * scale) + 'px';
-        img.style.height = Math.round(img.naturalHeight * scale) + 'px';
+        const scale  = Math.min(scaleW, scaleH);
+        const renderedW = Math.round(img.naturalWidth  * scale);
+        const renderedH = Math.round(img.naturalHeight * scale);
+        img.style.width  = renderedW + 'px';
+        img.style.height = renderedH + 'px';
         img.style.marginLeft = '0px';
-        item.fw = Math.round(img.offsetWidth / FRAMES); // largeur réelle d'une frame rendue
+        // fw = largeur exacte d'une frame rendue = totalW / FRAMES
+        item.fw = Math.round(renderedW / FRAMES);
       };
 
       div.appendChild(img);
