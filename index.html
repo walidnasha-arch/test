@@ -31,26 +31,25 @@ p { color:white; font-family:sans-serif; font-size:13px; }
 </style>
 </head>
 <body>
-  <p>Test margin-left avec viewport correct :</p>
+  <p>Dimensions depuis btn.offsetWidth :</p>
   <div class="act-wrap">
-    <div class="act-btn">Attaque Simple</div>
+    <div class="act-btn" id="btn">Attaque Simple</div>
     <div class="act-border-sprite" id="border"></div>
   </div>
   <div id="debug" style="color:#888;font-size:11px;line-height:1.8;"></div>
 
 <script>
-const FRAMES = 75, FPS = 10;
-const DESKTOP_W = 229.5;
-const ratio = window.innerWidth < 480
-  ? Math.min(1, (window.innerWidth - 21) / 2 / DESKTOP_W)
-  : 1;
-const DIV_W = Math.round(233 * ratio);
-const DIV_H = Math.round(122 * ratio);
-
+const FRAMES = 75, FPS = 10, MARGIN = 6;
 let frame = 0, direction = 1, fw = 0;
 
 function attach(){
   const div = document.getElementById('border');
+  const btn = document.getElementById('btn');
+
+  // Dimensions depuis la vraie taille du bouton
+  const DIV_W = btn.offsetWidth  + MARGIN * 2;
+  const DIV_H = btn.offsetHeight + MARGIN * 2;
+
   div.style.width  = DIV_W + 'px';
   div.style.height = DIV_H + 'px';
 
@@ -69,8 +68,9 @@ function attach(){
     fw = DIV_W;
 
     document.getElementById('debug').innerHTML =
-      'innerWidth:' + window.innerWidth + ' ratio:' + ratio.toFixed(3) +
-      '<br>DIV_W:' + DIV_W + ' fw:' + fw + ' imgW:' + img.style.width;
+      'btnW:' + btn.offsetWidth + ' btnH:' + btn.offsetHeight +
+      '<br>DIV_W:' + DIV_W + ' DIV_H:' + DIV_H +
+      '<br>fw:' + fw + ' imgW:' + img.style.width;
   };
 
   div.appendChild(img);
