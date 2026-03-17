@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="viewport" content="width=device-width,initial-scale=0.9,viewport-fit=cover"></head>
 <head>
+<meta name="viewport" content="width=device-width,initial-scale=0.9,viewport-fit=cover">
 <style>
 body { background:#111; display:flex; flex-direction:column; align-items:center; padding:40px; gap:20px; }
-p,div { color:white; font-family:sans-serif; font-size:13px; }
+p { color:white; font-family:sans-serif; font-size:13px; }
 .act-wrap { position:relative; width:221px; height:110px; }
 .act-btn {
   position:absolute; inset:0;
@@ -24,20 +24,19 @@ p,div { color:white; font-family:sans-serif; font-size:13px; }
   pointer-events:none;
 }
 .act-border-sprite img {
-  object-fit:none;
-  object-position:0px 0px;
   display:block;
   transition:none !important;
+  animation:none !important;
 }
 </style>
 </head>
 <body>
-  <p>Debug mobile :</p>
+  <p>Test margin-left avec viewport correct :</p>
   <div class="act-wrap">
-    <div class="act-btn">Attaque</div>
+    <div class="act-btn">Attaque Simple</div>
     <div class="act-border-sprite" id="border"></div>
   </div>
-  <div id="debug" style="background:rgba(255,255,255,.1);padding:10px;border-radius:8px;font-size:11px;line-height:1.8;max-width:300px;"></div>
+  <div id="debug" style="color:#888;font-size:11px;line-height:1.8;"></div>
 
 <script>
 const FRAMES = 75, FPS = 10;
@@ -58,26 +57,20 @@ function attach(){
   const img = document.createElement('img');
   img.src = 'texture.png';
   img.alt = ''; img.draggable = false;
-  img.transition = 'none';
+  img.style.transition = 'none';
+  img.style.animation  = 'none';
 
   img.onload = function(){
     const nativeFW = img.naturalWidth / FRAMES;
-    const scale = DIV_W / nativeFW;
-    const imgW = Math.round(img.naturalWidth  * scale);
-    const imgH = Math.round(img.naturalHeight * scale);
-    img.style.width  = imgW + 'px';
-    img.style.height = imgH + 'px';
+    const scale    = DIV_W / nativeFW;
+    img.style.width  = Math.round(img.naturalWidth  * scale) + 'px';
+    img.style.height = Math.round(img.naturalHeight * scale) + 'px';
+    img.style.marginLeft = '0px';
     fw = DIV_W;
 
     document.getElementById('debug').innerHTML =
-      'innerWidth: ' + window.innerWidth + '<br>' +
-      'ratio: ' + ratio.toFixed(3) + '<br>' +
-      'DIV_W: ' + DIV_W + 'px  DIV_H: ' + DIV_H + 'px<br>' +
-      'naturalW: ' + img.naturalWidth + '<br>' +
-      'nativeFW: ' + nativeFW.toFixed(2) + '<br>' +
-      'scale: ' + scale.toFixed(3) + '<br>' +
-      'imgW: ' + imgW + 'px  imgH: ' + imgH + 'px<br>' +
-      'fw: ' + fw + 'px';
+      'innerWidth:' + window.innerWidth + ' ratio:' + ratio.toFixed(3) +
+      '<br>DIV_W:' + DIV_W + ' fw:' + fw + ' imgW:' + img.style.width;
   };
 
   div.appendChild(img);
@@ -88,8 +81,8 @@ function tick(){
   frame += direction;
   if(frame >= FRAMES-1){ frame=FRAMES-1; direction=-1; }
   else if(frame <= 0)  { frame=0;        direction= 1; }
-  const pos = -Math.round(frame * fw);
-  document.querySelector('.act-border-sprite img').style.objectPosition = pos + 'px 0px';
+  const img = document.querySelector('.act-border-sprite img');
+  if(img) img.style.marginLeft = -Math.round(frame * fw) + 'px';
 }
 
 attach();
