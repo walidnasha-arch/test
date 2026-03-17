@@ -530,8 +530,9 @@ body{background:var(--bg);color:var(--txt);font-family:'Crimson Pro',Georgia,ser
 
 .act-border-sprite{
   position:absolute;
-  inset:-6px;
-  border-radius:12px;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:11px;
   overflow:hidden;
   z-index:2;
   pointer-events:none;
@@ -9185,20 +9186,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
 <!-- ═══ SPRITE BORDER ENGINE ═══ -->
 <script>
 (function(){
-  const FRAMES  = 20;   // nombre de frames
-  const FPS     = 12;   // frames par seconde
-  const CARD_W  = 221;  // largeur carte desktop référence
-  let frame = 0;
-  let items = [];
+  const FRAMES = 75;
+  const FPS    = 10;
+  const MARGIN = 6;
+  let frame = 0, direction = 1;
+  let items = []; // {img, fw} par carte
 
   function tick(){
     if(!items.length) return;
-    frame = (frame + 1) % FRAMES;
+    frame += direction;
+    if(frame >= FRAMES-1){ frame=FRAMES-1; direction=-1; }
+    else if(frame <= 0)  { frame=0;        direction= 1; }
     items = items.filter(it => it.img.isConnected);
     items.forEach(it => {
-      if(!it.fh) return;
-      // Sprite vertical : on déplace vers le haut (marginTop négatif)
-      it.img.style.marginTop = -Math.round(frame * it.fh) + 'px';
+      if(!it.fw) return;
+      it.img.style.marginLeft = -Math.round(frame * it.fw) + 'px';
     });
   }
 
@@ -9215,45 +9217,27 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
       const btn = div.previousElementSibling;
       if(!btn) return;
+      const DIV_W = btn.offsetWidth  + MARGIN * 2;
+      const DIV_H = btn.offsetHeight + MARGIN * 2;
 
-      // Dimensions de la div (inset:-6px = btn + 12px de chaque côté)
-      const DIV_W = Math.round(div.offsetWidth  || btn.offsetWidth);
-      const DIV_H = Math.round(div.offsetHeight || btn.offsetHeight);
-      div.style.overflow = 'hidden';
+      div.style.width  = DIV_W + 'px';
+      div.style.height = DIV_H + 'px';
 
       const img = document.createElement('img');
       img.src = 'texture.png';
       img.alt = ''; img.draggable = false;
       img.style.transition = 'none';
       img.style.animation  = 'none';
-      img.style.marginTop  = '0px';
-      img.style.position = 'relative';
-      img.style.left = '50%';
-      img.style.transform = 'translateX(-50%)';
 
-      const item = {img, fh:0};
+      const item = {img, fw:0};
 
       img.onload = function(){
-        // Sprite vertical : nativeFH = hauteur d'une frame native
-        const nativeFH = img.naturalHeight / FRAMES;
-        const nativeFW = img.naturalWidth;
-        // Scale pour que la largeur = DIV_W
-        const scaleW = DIV_W / nativeFW;
-        // Scale pour que la hauteur d'une frame = DIV_H
-        const scaleH = DIV_H / nativeFH;
-        // On prend le plus petit pour tout faire rentrer
-        const scale = Math.min(scaleW, scaleH);
-        // fh = hauteur exacte d'une frame rendue
-        const fh = Math.round(nativeFH * scale);
-        const renderedW = Math.round(nativeFW * scale);
-        const renderedH = fh * FRAMES; // multiple exact de fh
-        img.style.width  = renderedW + 'px';
-        img.style.height = renderedH + 'px';
-        // Centre horizontalement si sprite plus étroit que div
-        const hOffset = Math.round((DIV_W - renderedW) / 2);
-        img.style.marginLeft = hOffset + 'px';
-        img.style.marginTop  = '0px';
-        item.fh = fh;
+        const nativeFW = img.naturalWidth / FRAMES;
+        const scale    = DIV_W / nativeFW;
+        img.style.width  = Math.round(img.naturalWidth  * scale) + 'px';
+        img.style.height = Math.round(img.naturalHeight * scale) + 'px';
+        img.style.marginLeft = '0px';
+        item.fw = DIV_W; // fw propre à cette carte
       };
 
       div.appendChild(img);
@@ -9262,17 +9246,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function start(){
-    setTimeout(attach, 100);
+    attach();
     setInterval(tick, 1000 / FPS);
-    new MutationObserver(() => setTimeout(attach, 100)).observe(
+    new MutationObserver(attach).observe(
       document.getElementById('tp-adv') || document.body,
       {childList:true, subtree:true}
     );
   }
 
   window.setBorderActive = function(active){
-    if(active){ attach(); }
-    else {
+    if(active){
+      attach();
+    } else {
       document.querySelectorAll('.act-border-sprite img').forEach(img => img.remove());
       document.querySelectorAll('.act-border-sprite').forEach(div => {
         div.style.width=''; div.style.height='';
