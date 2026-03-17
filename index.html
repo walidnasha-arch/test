@@ -9216,8 +9216,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
       const btn = div.previousElementSibling;
       if(!btn) return;
-      const DIV_W = div.offsetWidth  || btn.offsetWidth;
-      const DIV_H = div.offsetHeight || btn.offsetHeight;
+      const DIV_W = Math.round(div.offsetWidth  || btn.offsetWidth);
+      const DIV_H = Math.round(div.offsetHeight || btn.offsetHeight);
 
       const img = document.createElement('img');
       img.src = 'texture.png';
@@ -9233,13 +9233,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const scaleW = DIV_W / nativeFW;
         const scaleH = DIV_H / nativeFH;
         const scale  = Math.min(scaleW, scaleH);
-        const renderedW = Math.round(img.naturalWidth  * scale);
+        // Force fw à un entier, puis calcule renderedW comme multiple exact
+        const fw = Math.round(nativeFW * scale);
+        const renderedW = fw * FRAMES; // multiple exact de FRAMES
         const renderedH = Math.round(img.naturalHeight * scale);
         img.style.width  = renderedW + 'px';
         img.style.height = renderedH + 'px';
         img.style.marginLeft = '0px';
-        // fw = largeur exacte d'une frame rendue = totalW / FRAMES
-        item.fw = Math.round(renderedW / FRAMES);
+        item.fw = fw;
       };
 
       div.appendChild(img);
