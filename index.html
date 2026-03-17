@@ -9185,12 +9185,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 <!-- ═══ SPRITE BORDER ENGINE ═══ -->
 <script>
 (function(){
-  const FRAMES = 10;
-  const FPS    = 10;
-  const AE_W   = 233;
-  const AE_H   = 126;
-  const CARD_W = 221;
-  let frame = 0, direction = 1;
+  const FRAMES  = 20;   // nombre de frames
+  const FPS     = 12;   // frames par seconde
+  const CARD_W  = 221;  // largeur carte desktop référence
+  let frame = 0;
   let items = [];
 
   function tick(){
@@ -9198,8 +9196,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     frame = (frame + 1) % FRAMES;
     items = items.filter(it => it.img.isConnected);
     items.forEach(it => {
-      if(!it.fw) return;
-      it.img.style.marginLeft = (it.offset - Math.round(frame * it.fw)) + 'px';
+      if(!it.fh) return;
+      // Sprite vertical : on déplace vers le haut (marginTop négatif)
+      it.img.style.marginTop = -Math.round(frame * it.fh) + 'px';
     });
   }
 
@@ -9216,6 +9215,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
       const btn = div.previousElementSibling;
       if(!btn) return;
+
+      // Dimensions de la div (inset:-6px = btn + 12px de chaque côté)
       const DIV_W = Math.round(div.offsetWidth  || btn.offsetWidth);
       const DIV_H = Math.round(div.offsetHeight || btn.offsetHeight);
 
@@ -9224,26 +9225,28 @@ document.addEventListener('DOMContentLoaded', ()=>{
       img.alt = ''; img.draggable = false;
       img.style.transition = 'none';
       img.style.animation  = 'none';
+      img.style.marginTop  = '0px';
 
-      const item = {img, fw:0, offset:0};
+      const item = {img, fh:0};
 
       img.onload = function(){
-        const nativeFW = img.naturalWidth / FRAMES;
-        const nativeFH = img.naturalHeight;
+        // Sprite vertical : nativeFH = hauteur d'une frame native
+        const nativeFH = img.naturalHeight / FRAMES;
+        const nativeFW = img.naturalWidth;
+        // Scale pour que la largeur = DIV_W
         const scaleW = DIV_W / nativeFW;
+        // Scale pour que la hauteur d'une frame = DIV_H
         const scaleH = DIV_H / nativeFH;
-        // fw basé sur scaleW (largeur), hauteur basée sur scaleH
-        // Les deux s'adaptent indépendamment
-        const fw = Math.round(nativeFW * scaleW); // = DIV_W exactement
-        const renderedW = fw * FRAMES;
-        const renderedH = Math.round(nativeFH * scaleH); // = DIV_H exactement
+        // On prend le plus petit pour tout faire rentrer
+        const scale = Math.min(scaleW, scaleH);
+        // fh = hauteur exacte d'une frame rendue
+        const fh = Math.round(nativeFH * scale);
+        const renderedW = Math.round(nativeFW * scale);
+        const renderedH = fh * FRAMES; // multiple exact de fh
         img.style.width  = renderedW + 'px';
         img.style.height = renderedH + 'px';
-        img.style.marginLeft = '0px';
-
-
-        item.fw = fw;
-        item.offset = 0;
+        img.style.marginTop = '0px';
+        item.fh = fh;
       };
 
       div.appendChild(img);
@@ -9252,7 +9255,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function start(){
-    setTimeout(attach, 100); // attend que le layout soit calculé
+    setTimeout(attach, 100);
     setInterval(tick, 1000 / FPS);
     new MutationObserver(() => setTimeout(attach, 100)).observe(
       document.getElementById('tp-adv') || document.body,
