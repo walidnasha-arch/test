@@ -9199,7 +9199,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     items = items.filter(it => it.img.isConnected);
     items.forEach(it => {
       if(!it.fw) return;
-      it.img.style.marginLeft = -Math.round(frame * it.fw) + 'px';
+      it.img.style.marginLeft = (it.offset - Math.round(frame * it.fw)) + 'px';
     });
   }
 
@@ -9225,7 +9225,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       img.style.transition = 'none';
       img.style.animation  = 'none';
 
-      const item = {img, fw:0};
+      const item = {img, fw:0, offset:0};
 
       img.onload = function(){
         const nativeFW = img.naturalWidth / FRAMES;
@@ -9240,7 +9240,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
         img.style.width  = renderedW + 'px';
         img.style.height = renderedH + 'px';
         img.style.marginLeft = '0px';
+        // Centrage initial si fw*FRAMES != DIV_W
+        const offset = Math.round((DIV_W - fw) / 2);
+        img.style.marginLeft = offset + 'px';
         item.fw = fw;
+        item.offset = offset;
       };
 
       div.appendChild(img);
