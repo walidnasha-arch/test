@@ -9240,10 +9240,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
         img.style.width  = renderedW + 'px';
         img.style.height = renderedH + 'px';
         img.style.marginLeft = '0px';
-        const offset = Math.round((DIV_W - fw) / 2);
-        img.style.marginLeft = offset + 'px';
+
+
         item.fw = fw;
-        item.offset = offset;
+        item.offset = 0;
       };
 
       div.appendChild(img);
