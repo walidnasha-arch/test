@@ -9219,6 +9219,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       // Dimensions de la div (inset:-6px = btn + 12px de chaque côté)
       const DIV_W = Math.round(div.offsetWidth  || btn.offsetWidth);
       const DIV_H = Math.round(div.offsetHeight || btn.offsetHeight);
+      div.style.overflow = 'hidden';
 
       const img = document.createElement('img');
       img.src = 'texture.png';
@@ -9226,6 +9227,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
       img.style.transition = 'none';
       img.style.animation  = 'none';
       img.style.marginTop  = '0px';
+      img.style.display = 'block';
+      img.style.marginLeft = 'auto';
+      img.style.marginRight = 'auto';
 
       const item = {img, fh:0};
 
