@@ -9229,7 +9229,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
       img.onload = function(){
         const nativeFW = img.naturalWidth / FRAMES;
-        const scale    = DIV_W / nativeFW;
+        const nativeFH = img.naturalHeight;
+        const scaleW = DIV_W / nativeFW;
+        const scaleH = DIV_H / nativeFH;
+        const scale  = Math.min(scaleW, scaleH); // contain : tout rentre
         img.style.width  = Math.round(img.naturalWidth  * scale) + 'px';
         img.style.height = Math.round(img.naturalHeight * scale) + 'px';
         img.style.marginLeft = '0px';
