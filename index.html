@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { background:#111; display:flex; flex-direction:column; align-items:center; padding:40px; gap:20px; }
+p,div { color:white; font-family:sans-serif; font-size:13px; }
+.act-wrap { position:relative; width:221px; height:110px; }
+.act-btn {
+  position:absolute; inset:0;
+  background:rgba(10,5,18,1);
+  border:1px solid rgba(180,50,10,.4);
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  color:white; font-family:sans-serif; z-index:1;
+}
+.act-border-sprite {
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:11px;
+  overflow:hidden;
+  z-index:2;
+  pointer-events:none;
+}
+.act-border-sprite img {
+  object-fit:none;
+  object-position:0px 0px;
+  display:block;
+  transition:none !important;
+}
+</style>
+</head>
+<body>
+  <p>Debug mobile :</p>
+  <div class="act-wrap">
+    <div class="act-btn">Attaque</div>
+    <div class="act-border-sprite" id="border"></div>
+  </div>
+  <div id="debug" style="background:rgba(255,255,255,.1);padding:10px;border-radius:8px;font-size:11px;line-height:1.8;max-width:300px;"></div>
+
+<script>
+const FRAMES = 75, FPS = 10;
+const DESKTOP_W = 229.5;
+const ratio = window.innerWidth < 480
+  ? Math.min(1, (window.innerWidth - 21) / 2 / DESKTOP_W)
+  : 1;
+const DIV_W = Math.round(233 * ratio);
+const DIV_H = Math.round(122 * ratio);
+
+let frame = 0, direction = 1, fw = 0;
+
+function attach(){
+  const div = document.getElementById('border');
+  div.style.width  = DIV_W + 'px';
+  div.style.height = DIV_H + 'px';
+
+  const img = document.createElement('img');
+  img.src = 'texture.png';
+  img.alt = ''; img.draggable = false;
+  img.transition = 'none';
+
+  img.onload = function(){
+    const nativeFW = img.naturalWidth / FRAMES;
+    const scale = DIV_W / nativeFW;
+    const imgW = Math.round(img.naturalWidth  * scale);
+    const imgH = Math.round(img.naturalHeight * scale);
+    img.style.width  = imgW + 'px';
+    img.style.height = imgH + 'px';
+    fw = DIV_W;
+
+    document.getElementById('debug').innerHTML =
+      'innerWidth: ' + window.innerWidth + '<br>' +
+      'ratio: ' + ratio.toFixed(3) + '<br>' +
+      'DIV_W: ' + DIV_W + 'px  DIV_H: ' + DIV_H + 'px<br>' +
+      'naturalW: ' + img.naturalWidth + '<br>' +
+      'nativeFW: ' + nativeFW.toFixed(2) + '<br>' +
+      'scale: ' + scale.toFixed(3) + '<br>' +
+      'imgW: ' + imgW + 'px  imgH: ' + imgH + 'px<br>' +
+      'fw: ' + fw + 'px';
+  };
+
+  div.appendChild(img);
+}
+
+function tick(){
+  if(!fw) return;
+  frame += direction;
+  if(frame >= FRAMES-1){ frame=FRAMES-1; direction=-1; }
+  else if(frame <= 0)  { frame=0;        direction= 1; }
+  const pos = -Math.round(frame * fw);
+  document.querySelector('.act-border-sprite img').style.objectPosition = pos + 'px 0px';
+}
+
+attach();
+setInterval(tick, 1000/FPS);
+</script>
+</body>
+</html>
